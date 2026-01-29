@@ -25,7 +25,7 @@ body {
   font-size: 3rem;
   padding: 20px 40px;
   background-color: #282e33;
-  color: #695847;
+  color: #c5b381;
   border-radius: 25px;
   box-shadow: 5px 5px #695847;
 }
@@ -59,6 +59,12 @@ body {
   padding: 4rem 1rem;
 }
 
+.pageTitle {
+  color: #c5b381;
+  font-size: 2rem;
+  margin-bottom: 1rem;
+}
+
 .feature {
   display: flex;
   align-items: center;
@@ -73,20 +79,37 @@ body {
 
 .feature .text {
   width: 55%;
+  margin: 5rem; 
+  font-size: 1.2rem;
+}
+
+.text.reverse {
+  margin: 0;
 }
 
 .feature.reverse {
   flex-direction: row-reverse;
 }
 
+
 @media (max-width: 768px) {
   .feature,
   .feature.reverse {
     flex-direction: column;
+    gap: 2rem;
   }
 
   .feature img,
   .feature .text {
     width: 100%;
+  }
+
+  .pageTitle {
+    font-size: 1.8rem; 
+  }
+
+  .feature .text p {
+    font-size: 1rem;
+    line-height: 1.5;
   }
 }
