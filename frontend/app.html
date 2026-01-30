@@ -1,0 +1,84 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Progress</title>
+  <meta name="description" content="Progress helps you organize tasks, track consistency, and build better habits.">
+  <link rel="stylesheet" href="styles/appStyles.css">
+</head>
+<body>
+
+  <nav class="navbar-left">
+    <div id="logo">
+      <img
+        src="https://img.freepik.com/premium-photo/beautiful-beach-sand-background_63047-905.jpg"
+        alt="Logo"
+        loading="lazy"
+      >
+    </div>
+    <ul class="navigation-features">
+      <li><a href="main.html">Home</a></li>
+      <li><a href="login.html">Login</a></li>
+      <li><a href="signup.html">Signup</a></li>
+      <li><a href="#features">Features</a></li>
+      <li><a href="#contact">Contact</a></li>
+    </ul>
+  </nav>
+
+  <div class="main-wrapper">
+
+    <header class="hero">
+      <div id="heroOverlay">
+        <h1 id="title">Progress</h1>
+      </div>
+    </header>
+
+    <main class="page">
+
+      <section class="feature" id="features">
+        <div class="feature-text">
+          <h2 class="feature-title">To-Do List</h2>
+        </div>
+
+        <div class="feature-box">
+          <h3>Your Tasks</h3>
+          <div class="todo-input">
+            <input type="text" id="newTask" placeholder="Add a new task...">
+            <button id="addTaskBtn">Add</button>
+          </div>
+          <ul class="todo-list"></ul>
+        </div>
+      </section>
+    </main>
+
+  </div>
+
+  <script>
+    const addBtn = document.getElementById('addTaskBtn');
+    const newTaskInput = document.getElementById('newTask');
+    const todoList = document.querySelector('.todo-list');
+
+    addBtn.addEventListener('click', () => {
+      const taskText = newTaskInput.value.trim();
+      if (!taskText) return;
+
+      const li = document.createElement('li');
+      li.textContent = taskText;
+
+      const delBtn = document.createElement('button');
+      delBtn.textContent = '✖';
+      delBtn.addEventListener('click', () => li.remove());
+      li.appendChild(delBtn);
+
+      todoList.appendChild(li);
+      newTaskInput.value = '';
+    });
+
+    newTaskInput.addEventListener('keypress', (e) => {
+      if (e.key === 'Enter') addBtn.click();
+    });
+  </script>
+
+</body>
+</html>

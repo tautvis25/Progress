@@ -79,12 +79,27 @@
       margin-top: 0.5rem;
     }
 
-    .login-container .links a {
+    .login-container .links {
       color: #c5b381;
       text-decoration: none;
     }
 
     .login-container .links a:hover {
+      color: #695847;
+    }
+
+    #return {
+      text-align: center;
+      margin-top: 1.5rem;
+      color: #c5b381;
+    } 
+
+    a {
+      color: #c5b381;
+      text-decoration: none;
+    }
+
+    a:hover {
       color: #695847;
     }
 
