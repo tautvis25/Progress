@@ -82,7 +82,7 @@ body {
 }
 
 .page {
-  max-width: 900px;
+  max-width: 100%;
   margin: 2rem 3rem;
   padding: 2rem 0;
 }
@@ -98,6 +98,7 @@ body {
   color: #c5b381;
   font-size: 2rem;
   margin-bottom: 0.5rem;
+  text-align: center;
 }
 
 .feature-box {
@@ -105,10 +106,11 @@ body {
   padding: 1.5rem;
   border-radius: 15px;
   box-shadow: 3px 3px 10px #00000077;
-  width: 98rem;
-  height: auto;
+  width: 96rem;
+  height: 28rem;
   display: flex;
   flex-direction: column;
+  align-self: center;
   gap: 1rem;
 }
 
@@ -153,6 +155,8 @@ body {
   display: flex;
   flex-direction: column;
   gap: 0.5rem;
+  overflow-y: auto;
+  height: 100%; 
 }
 
 .todo-list li {
@@ -160,9 +164,12 @@ body {
   padding: 0.8rem 1rem;
   border-radius: 8px;
   display: flex;
-  justify-content: space-between;
   align-items: center;
   color: #c5b381;
+}
+
+.todo-list li span {
+  flex: 1; 
 }
 
 .todo-list li button {
@@ -171,6 +178,83 @@ body {
   color: #695847;
   font-weight: bold;
   cursor: pointer;
+  margin-left: 0.5rem; 
+}
+
+.todo-list li.completed span {
+  text-decoration: line-through;
+  opacity: 0.2;
+}
+
+
+.callender {
+  margin: 0 auto;
+  max-width: 420px;   
+  width: 100%;
+  background-color: #282e33;
+  padding: 1rem;
+  border-radius: 15px;
+  box-shadow: 3px 3px 10px #00000077;
+}
+
+.days {
+  display: flex;
+  flex-wrap: wrap;         
+  padding: 0;
+  margin: 0;
+  list-style: none;
+}
+
+.days li {
+  width: calc(100% / 9);    
+  text-align: center;
+  box-sizing: border-box;
+  font-weight: bold;
+}
+
+.days button:hover {
+  color: #695847;
+}
+
+.days button {
+  padding: 0.5rem 0.5rem;
+  border: none;
+  border-radius: 6px;
+  background-color: #282e33;
+  color: #c5b381;
+  font-weight: bold;
+  cursor: pointer;
+  min-width: 40px;
+  font-size: 1.2rem;
+}
+
+.days button.selected {
+  background-color: #c5b381;
+  color: #282e33;
+}
+
+#month-name {
+  text-align: center;
+  font-size: 1.5rem;
+  margin-bottom: 1rem;
+  color: #c5b381;
+}
+
+.progress-bar {
+  width: 100%;
+  height: 30px;
+  background-color: #bdbdbd; 
+  border-radius: 10px;
+  overflow: hidden;
+  position: relative;
+}
+
+.progress-bar-fill {
+  height: 100%;
+  width: 0%;
+  background-color: #c5b381; 
+  transition: width 0.3s, background-color 0.3s;
+  border-radius: 10px 0 0 10px;
 }
 
 @media (max-width: 768px) {

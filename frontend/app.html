@@ -35,6 +35,10 @@
     </header>
 
     <main class="page">
+      <div class="callender">
+        <h3 id="month-name"></h3>
+        <ul id="cal-days" class="days"></ul>
+      </div>
 
       <section class="feature" id="features">
         <div class="feature-text">
@@ -48,37 +52,17 @@
             <button id="addTaskBtn">Add</button>
           </div>
           <ul class="todo-list"></ul>
+          <div id="progress-bar" class="progress-bar">
+              <div class="progress-bar-fill"></div>
+          </div>
         </div>
+
       </section>
     </main>
 
   </div>
 
-  <script>
-    const addBtn = document.getElementById('addTaskBtn');
-    const newTaskInput = document.getElementById('newTask');
-    const todoList = document.querySelector('.todo-list');
-
-    addBtn.addEventListener('click', () => {
-      const taskText = newTaskInput.value.trim();
-      if (!taskText) return;
-
-      const li = document.createElement('li');
-      li.textContent = taskText;
-
-      const delBtn = document.createElement('button');
-      delBtn.textContent = '✖';
-      delBtn.addEventListener('click', () => li.remove());
-      li.appendChild(delBtn);
-
-      todoList.appendChild(li);
-      newTaskInput.value = '';
-    });
-
-    newTaskInput.addEventListener('keypress', (e) => {
-      if (e.key === 'Enter') addBtn.click();
-    });
-  </script>
+  <script src="javascript/app.js"></script>
 
 </body>
 </html>
