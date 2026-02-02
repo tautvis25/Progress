@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Progress</title>
+  <link rel="stylesheet" href="styles/branches.css">
+</head>
+<body>
+
+<nav class="navbar-left">
+  <div id="logo">
+    <img src="https://img.freepik.com/premium-photo/beautiful-beach-sand-background_63047-905.jpg">
+  </div>
+  <ul class="navigation-features">
+    <li><a href="#">Home</a></li>
+    <li><a href="#">Login</a></li>
+    <li><a href="#">Signup</a></li>
+  </ul>
+</nav>
+
+<div class="main-wrapper">
+  <header class="hero">
+    <div id="heroOverlay">
+      <h1 id="title">Progress</h1>
+    </div>
+  </header>
+
+  <main class="page">
+    <section class="feature">
+      <h2 class="feature-title">Branches</h2>
+
+      <div class="controls">
+        <input id="nameInput" placeholder="Branch name" disabled>
+        <button id="add" disabled>Add</button>
+        <button id="remove" disabled>Remove</button>
+        <button id="goto" disabled>Go To</button>
+      </div>
+
+      <div class="feature-box" id="editor">
+        <div class="editor-canvas" id="canvas">
+          <svg id="connections"></svg>
+        </div>
+      </div>
+    </section>
+  </main>
+</div>
+
+<script src="javascript/branches.js"></script>
+</body>
+</html>

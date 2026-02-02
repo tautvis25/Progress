@@ -1,0 +1,132 @@
+body {
+  margin: 0;
+  display: flex;
+  background-color: #1B211A;
+  color: #c5b381;
+  font-family: Helvetica, Arial, sans-serif;
+}
+
+.navbar-left {
+  position: fixed;
+  width: 220px;
+  height: 100vh;
+  background-color: #282e33;
+  padding: 2rem 1rem;
+  text-align: center;
+}
+
+.navbar-left img {
+  width: 125px;
+  height: 125px;
+  border-radius: 50%;
+  margin-top: 40px;
+}
+
+.navigation-features {
+  list-style: none;
+  padding: 0;
+  margin-top: 2rem;
+}
+
+.navigation-features a {
+  color: #c5b381;
+  text-decoration: none;
+  display: block;
+  margin: 1rem 0;
+}
+
+.main-wrapper {
+  margin-left: 220px;
+  flex: 1;
+}
+
+.hero {
+  background-color: #282e33;
+}
+
+#heroOverlay {
+  height: 250px;
+  background-color: #c5b381;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+#title {
+  background-color: #282e33;
+  padding: 20px 40px;
+  border-radius: 25px;
+}
+
+.page {
+  margin: 2rem 3rem;
+}
+
+.controls {
+  display: flex;
+  gap: 0.5rem;
+  margin-bottom: 1rem;
+}
+
+.controls input {
+  padding: 0.5rem;
+  border-radius: 6px;
+  border: none;
+}
+
+.controls button {
+  padding: 0.6rem 1rem;
+  border-radius: 8px;
+  border: none;
+  background-color: #c5b381;
+  color: #282e33;
+  font-weight: bold;
+  cursor: pointer;
+}
+
+.controls button:disabled,
+.controls input:disabled {
+  opacity: 0.4;
+  cursor: default;
+}
+
+.feature-box {
+  position: relative;
+  width: 96rem;
+  height: 28rem;
+  background-color: #282e33;
+  border-radius: 15px;
+  overflow: auto;
+}
+
+.editor-canvas {
+  position: relative;
+  width: 3000px;
+  height: 2000px;
+}
+
+.node {
+  position: absolute;
+  width: 140px;
+  height: 50px;
+  background-color: #1B211A;
+  border: 2px solid #695847;
+  border-radius: 10px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: grab;
+  z-index: 2;
+}
+
+.node.selected {
+  outline: 2px solid #c5b381;
+}
+
+svg {
+  position: absolute;
+  width: 3000px;
+  height: 2000px;
+  pointer-events: none;
+  z-index: 1;
+}

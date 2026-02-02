@@ -85,7 +85,7 @@ function updateProgressBar() {
 
   if (progressPercent < 30) {
     progressFill.style.backgroundColor = '#d68966'; 
-  } else if (progressPercent < 40) {
+  } else if (progressPercent < 0) {
     progressFill.style.backgroundColor = '#cfca7e'; 
   } else if (progressPercent < 80) {
     progressFill.style.backgroundColor = '#69a347'; 
