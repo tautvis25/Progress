@@ -1,3 +1,4 @@
+
 body {
     font-family: Arial, sans-serif;
     display: flex;
@@ -8,7 +9,7 @@ body {
     margin: 0;
 }
 
-.signup-container { 
+.signup-container {
     background-color: #fff;
     padding: 2rem;
     border-radius: 10px;

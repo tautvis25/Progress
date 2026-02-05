@@ -5,13 +5,13 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <link rel="stylesheet" href="styles/loginStyles.css">
   <title>Login - Progress Tracker</title>
- 
 </head>
 <body>
 
-  <div class="login-container">
-    <h1>Login</h1>
-    <form action="#" method="POST">
+  <div class="signup-container"> 
+    <h1 id="title">Login</h1>
+
+    <form id="login-form">
       <div class="input-group">
         <label for="username">Username</label>
         <input type="text" id="username" placeholder="Enter your username" required>
@@ -22,17 +22,22 @@
         <input type="password" id="password" placeholder="Enter your password" required>
       </div>
 
-      <button type="submit">Log In</button>
+      <button type="submit" id="submit">Log In</button>
+
+      <div id="error"></div>
 
       <div class="links">
         <a href="#">Forgot Password?</a>
         <a href="signup.html">Sign Up</a>
       </div>
+
+      <div class="links">
+        <a href="main.html">← Return to Home</a>
+      </div>
     </form>
-    <div id="return">
-      <h2><a href="main.html">← Return to Home</a></h2>
-    </div>
+
   </div>
 
+  <script src="./javascript/login.js"></script>
 </body>
 </html>

@@ -1,3 +1,5 @@
+const API_URL = "/feature/todo"; 
+
 const daysList = document.getElementById('cal-days');
 const monthHeader = document.getElementById('month-name');
 const monthNames = ["January","February","March","April","May","June","July","August","September","October","November","December"];
@@ -38,62 +40,115 @@ function renderDays(center) {
 
 renderDays(centerDate);
 
-
 const addBtn = document.getElementById('addTaskBtn');
 const newTaskInput = document.getElementById('newTask');
 const todoList = document.querySelector('.todo-list');
 
-addBtn.addEventListener('click', () => {
-  const taskText = newTaskInput.value.trim();
-  if (!taskText) return;
+const token = localStorage.getItem("jwtToken"); 
 
-  const li = document.createElement('li');
-  const textSpan = document.createElement('span');
-  textSpan.textContent = taskText;
-  li.appendChild(textSpan);
+if (!token) {
+    alert("Please login first");
+    window.location.href = "login.html";
+}
 
-  const completeBtn = document.createElement('button');
-  completeBtn.textContent = '✔';
-  completeBtn.addEventListener('click', () => li.classList.toggle('completed'));
+async function fetchTodos() {
+    try {
+        const res = await fetch(API_URL + "/", {
+            headers: { "Authorization": `Bearer ${token}` }
+        });
+        if (!res.ok) {
+            const err = await res.json();
+            console.error("Failed to fetch todos:", err);
+            return;
+        }
+        const todos = await res.json();
+        todoList.innerHTML = '';
+        todos.forEach(todo => addTodoToDOM(todo));
+        updateProgressBar();
+    } catch (err) {
+        console.error("Error fetching todos:", err);
+    }
+}
 
-  const delBtn = document.createElement('button');
-  delBtn.textContent = '✖';
-  delBtn.addEventListener('click', () => li.remove());
+function addTodoToDOM(todo) {
+    const li = document.createElement('li');
+    const textSpan = document.createElement('span');
+    textSpan.textContent = todo.content;
+    if (todo.completed) li.classList.add('completed');
+    li.appendChild(textSpan);
 
-  li.appendChild(completeBtn);
-  li.appendChild(delBtn);
+    const completeBtn = document.createElement('button');
+    completeBtn.textContent = '✔';
+    completeBtn.addEventListener('click', async () => {
+        li.classList.toggle('completed');
+        await fetch(`${API_URL}/${todo.id}`, {
+            method: 'PUT',
+            headers: {
+                "Content-Type": "application/json",
+                "Authorization": `Bearer ${token}`
+            },
+            body: JSON.stringify({ completed: li.classList.contains('completed') })
+        });
+        updateProgressBar();
+    });
 
-  todoList.appendChild(li);
-  newTaskInput.value = '';
+    const delBtn = document.createElement('button');
+    delBtn.textContent = '✖';
+    delBtn.addEventListener('click', async () => {
+        await fetch(`${API_URL}/${todo.id}`, {
+            method: 'DELETE',
+            headers: { "Authorization": `Bearer ${token}` }
+        });
+        li.remove();
+        updateProgressBar();
+    });
+
+    li.appendChild(completeBtn);
+    li.appendChild(delBtn);
+    todoList.appendChild(li);
+}
+
+addBtn.addEventListener('click', async () => {
+    const taskText = newTaskInput.value.trim();
+    if (!taskText) return;
+
+    const res = await fetch(API_URL + "/", {
+        method: 'POST',
+        headers: {
+            "Content-Type": "application/json",
+            "Authorization": `Bearer ${token}`
+        },
+        body: JSON.stringify({ content: taskText })
+    });
+    const newTodo = await res.json();
+    addTodoToDOM(newTodo);
+    newTaskInput.value = '';
+    updateProgressBar();
 });
 
 newTaskInput.addEventListener('keypress', (e) => {
-  if (e.key === 'Enter') addBtn.click();
+    if (e.key === 'Enter') addBtn.click();
 });
 
-
-
 function updateProgressBar() {
-  const totalTasks = todoList.children.length;
-  const completedTasks = todoList.querySelectorAll('li.completed').length;
-  const progressPercent = totalTasks ? (completedTasks / totalTasks) * 100 : 0;
+    const totalTasks = todoList.children.length;
+    const completedTasks = todoList.querySelectorAll('li.completed').length;
+    const progressPercent = totalTasks ? (completedTasks / totalTasks) * 100 : 0;
 
-  const progressFill = document.querySelector('.progress-bar-fill');
-  if (!progressFill) return;
+    const progressFill = document.querySelector('.progress-bar-fill');
+    if (!progressFill) return;
 
-  progressFill.style.width = progressPercent + '%';
+    progressFill.style.width = progressPercent + '%';
 
-  if (progressPercent < 30) {
-    progressFill.style.backgroundColor = '#d68966'; 
-  } else if (progressPercent < 0) {
-    progressFill.style.backgroundColor = '#cfca7e'; 
-  } else if (progressPercent < 80) {
-    progressFill.style.backgroundColor = '#69a347'; 
-  } else {
-    progressFill.style.backgroundColor = '#3e7a2f'; 
-  }
+    if (progressPercent < 30) {
+        progressFill.style.backgroundColor = '#d68966'; 
+    } else if (progressPercent < 60) {
+        progressFill.style.backgroundColor = '#cfca7e'; 
+    } else if (progressPercent < 80) {
+        progressFill.style.backgroundColor = '#69a347'; 
+    } else {
+        progressFill.style.backgroundColor = '#3e7a2f'; 
+    }
 }
 
-todoList.addEventListener('click', () => updateProgressBar());
-addBtn.addEventListener('click', () => updateProgressBar());
-
+fetchTodos();

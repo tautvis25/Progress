@@ -4,13 +4,14 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Sign Up - Progress Tracker</title>
-  <link rel="stylesheet" href="styles/signup.css">
+  <link rel="stylesheet" href="styles/signupStyles.css">
 </head>
 <body>
 
   <div class="signup-container">
     <h1 id="title">Sign Up</h1>
-    <form action="#" method="POST">
+
+    <form id="signup-form">
       <div class="input-group">
         <label for="username">Username</label>
         <input type="text" id="username" placeholder="Enter your username" required>
@@ -26,12 +27,9 @@
         <input type="password" id="password" placeholder="Enter your password" required>
       </div>
 
-      <div class="input-group">
-        <label for="confirm-password">Confirm Password</label>
-        <input type="password" id="confirm-password" placeholder="Confirm your password" required>
-      </div>
+      <button type="submit" id="submit">Sign Up</button>
 
-      <button type="submit">Sign Up</button>
+      <div id="error"></div>
 
       <div class="links">
         <a href="login.html">Already have an account? Login</a>
@@ -39,5 +37,6 @@
     </form>
   </div>
 
+  <script src="./javascript/register.js"></script>
 </body>
 </html>
