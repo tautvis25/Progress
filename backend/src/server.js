@@ -5,6 +5,7 @@ import authRoutes from "./routes/authRoutes.js";
 import featureRoutes from "./routes/featureRoutes.js";
 import dotenv from "dotenv";
 import authMiddleware from "./middleware/authMiddleware.js";
+import cookieParser from "cookie-parser";
 
 dotenv.config();
 const app = express();
@@ -16,9 +17,14 @@ const __dirname = path.dirname(__filename);
 const frontendPath = path.join(__dirname, "..", "..", "frontend");
 app.use(express.static(frontendPath));
 app.use(express.json());
+app.use(cookieParser());
 
 app.get("/", (req, res) => {
   res.sendFile(path.join(frontendPath, "main.html"));
+});
+
+app.get("/progress", authMiddleware, (req, res) => {
+    res.sendFile(path.join(frontendPath, "app.html"));
 });
 
 // Routes

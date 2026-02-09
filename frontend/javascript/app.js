@@ -44,18 +44,38 @@ const addBtn = document.getElementById('addTaskBtn');
 const newTaskInput = document.getElementById('newTask');
 const todoList = document.querySelector('.todo-list');
 
-const token = localStorage.getItem("jwtToken"); 
+async function fetchWithToken(url, options = {}) {
+    let token = localStorage.getItem("accessToken");
+    options.headers = options.headers || {};
+    options.headers["Authorization"] = `Bearer ${token}`;
 
-if (!token) {
-    alert("Please login first");
-    window.location.href = "login.html";
+    options.credentials = "include";  
+
+    let res = await fetch(url, options);
+
+    if (res.status === 403 || res.status === 401) { 
+        const refreshRes = await fetch("/auth/refresh", {
+            method: "POST",
+            credentials: "include"  
+        });
+
+        if (refreshRes.ok) {
+            const data = await refreshRes.json();
+            localStorage.setItem("accessToken", data.accessToken);
+            options.headers["Authorization"] = `Bearer ${data.accessToken}`;
+            res = await fetch(url, options); 
+        } else {
+            window.location.href = "/login.html";
+            return;
+        }
+    }
+
+    return res;
 }
 
 async function fetchTodos() {
     try {
-        const res = await fetch(API_URL + "/", {
-            headers: { "Authorization": `Bearer ${token}` }
-        });
+        const res = await fetchWithToken(API_URL + "/");
         if (!res.ok) {
             const err = await res.json();
             console.error("Failed to fetch todos:", err);
@@ -81,12 +101,9 @@ function addTodoToDOM(todo) {
     completeBtn.textContent = '✔';
     completeBtn.addEventListener('click', async () => {
         li.classList.toggle('completed');
-        await fetch(`${API_URL}/${todo.id}`, {
+        await fetchWithToken(`${API_URL}/${todo.id}`, {
             method: 'PUT',
-            headers: {
-                "Content-Type": "application/json",
-                "Authorization": `Bearer ${token}`
-            },
+            headers: { "Content-Type": "application/json" },
             body: JSON.stringify({ completed: li.classList.contains('completed') })
         });
         updateProgressBar();
@@ -95,10 +112,7 @@ function addTodoToDOM(todo) {
     const delBtn = document.createElement('button');
     delBtn.textContent = '✖';
     delBtn.addEventListener('click', async () => {
-        await fetch(`${API_URL}/${todo.id}`, {
-            method: 'DELETE',
-            headers: { "Authorization": `Bearer ${token}` }
-        });
+        await fetchWithToken(`${API_URL}/${todo.id}`, { method: 'DELETE' });
         li.remove();
         updateProgressBar();
     });
@@ -112,14 +126,12 @@ addBtn.addEventListener('click', async () => {
     const taskText = newTaskInput.value.trim();
     if (!taskText) return;
 
-    const res = await fetch(API_URL + "/", {
+    const res = await fetchWithToken(API_URL + "/", {
         method: 'POST',
-        headers: {
-            "Content-Type": "application/json",
-            "Authorization": `Bearer ${token}`
-        },
+        headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ content: taskText })
     });
+    if (!res.ok) return;
     const newTodo = await res.json();
     addTodoToDOM(newTodo);
     newTaskInput.value = '';
@@ -150,5 +162,30 @@ function updateProgressBar() {
         progressFill.style.backgroundColor = '#3e7a2f'; 
     }
 }
+
+const logoutLink = document.getElementById("logout-link");
+
+logoutLink.addEventListener("click", async (e) => {
+    e.preventDefault();
+
+    try {
+        const res = await fetch("/auth/logout", {
+            method: "POST",
+            credentials: "include"
+        });
+
+        if (res.ok) {
+            localStorage.removeItem("accessToken");
+
+            window.location.href = "/main.html";
+        } else {
+            alert("Logout failed. Please try again.");
+        }
+    } catch (err) {
+        console.error("Logout error:", err);
+        alert("Logout failed. Please try again.");
+    }
+});
+
 
 fetchTodos();

@@ -1,7 +1,6 @@
 import jwt from "jsonwebtoken";
 
 function authMiddleware(req, res, next) {
-
     const authHeader = req.headers["authorization"];
     if (!authHeader) {
         return res.status(401).json({ message: "No token provided" });
@@ -14,10 +13,14 @@ function authMiddleware(req, res, next) {
 
     const token = parts[1];
 
-    jwt.verify(token, process.env.JWT_SECRET, (err, decoded) => {
+    jwt.verify(token, process.env.ACCESS_TOKEN_SECRET, (err, decoded) => {
         if (err) {
+            if (err.name === "TokenExpiredError") {
+                return res.status(403).json({ message: "Access token expired" });
+            }
             return res.status(401).json({ message: "Invalid token" });
         }
+
         req.userId = decoded.id;
         next();
     });
