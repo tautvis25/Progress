@@ -21,18 +21,17 @@ async function loginUser() {
         const response = await fetch(apiBase + "auth/login", {
             method: "POST",
             headers: { "Content-Type": "application/json" },
-            body: JSON.stringify({ username, password })
+            body: JSON.stringify({ username, password }),
+            credentials: "include" 
         });
 
         const data = await response.json();
 
-        if (!response.ok) {
-            throw new Error(data.message || "Login failed");
-        }
+        if (!response.ok) throw new Error(data.message || "Login failed");
 
-        localStorage.setItem("jwtToken", data.token);
+        localStorage.setItem("accessToken", data.accessToken);
 
-        window.location.href = "/main.html";
+        window.location.href = "/app.html";
 
     } catch (err) {
         error.textContent = err.message;
@@ -43,6 +42,7 @@ async function loginUser() {
         submitButton.disabled = false;
     }
 }
+
 
 document.getElementById("login-form").addEventListener("submit", (e) => {
     e.preventDefault();
