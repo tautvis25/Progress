@@ -27,8 +27,6 @@ app.get("/progress", authMiddleware, (req, res) => {
     res.sendFile(path.join(frontendPath, "app.html"));
 });
 
-// Routes
-
 app.use(`/auth`, authRoutes);
 app.use(`/feature`, authMiddleware, featureRoutes);
 

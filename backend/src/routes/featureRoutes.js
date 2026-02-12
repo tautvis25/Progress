@@ -60,12 +60,10 @@ router.delete("/todo/:id", (req, res) => {
 
 
 router.get("/branches/", (req, res) => {
-    console.log("UserId in request:", req.userId);
     if (!req.userId) return res.status(401).json({ message: "Unauthorized" });
     try {
         const stmt = db.prepare("SELECT id, name FROM branches WHERE user_id = ?");
         const branches = stmt.all(req.userId);
-        console.log("Branches fetched:", branches);
         res.json(branches);
     } catch (err) {
         console.error("Error fetching branches:", err);
@@ -102,7 +100,7 @@ router.delete("/branches/:branchId", (req, res) => {
 router.get("/branches/:branchId/nodes", (req, res) => {
     const { branchId } = req.params;
     try {
-        const stmt = db.prepare("SELECT id, name, x, y FROM nodes WHERE user_id = ? AND branch_id = ?");
+        const stmt = db.prepare("SELECT id, name, x, y, role FROM nodes WHERE user_id = ? AND branch_id = ?");
         const nodes = stmt.all(req.userId, branchId);
         res.json(nodes);
     } catch {
@@ -112,12 +110,13 @@ router.get("/branches/:branchId/nodes", (req, res) => {
 
 router.post("/branches/:branchId/nodes", (req, res) => {
     const { branchId } = req.params;
-    const { name, x, y } = req.body;
+    const { name, x, y, role } = req.body;
     if (!name) return res.status(400).json({ message: "Name required" });
+
     try {
-        const stmt = db.prepare("INSERT INTO nodes (user_id, branch_id, name, x, y) VALUES (?, ?, ?, ?, ?)");
-        const result = stmt.run(req.userId, branchId, name, x || 0, y || 0);
-        res.status(201).json({ id: result.lastInsertRowid, name, x: x || 0, y: y || 0 });
+        const stmt = db.prepare("INSERT INTO nodes (user_id, branch_id, name, x, y, role) VALUES (?, ?, ?, ?, ?, ?)");
+        const result = stmt.run(req.userId, branchId, name, x || 0, y || 0, role || "root");
+        res.status(201).json({ id: result.lastInsertRowid, name, x: x || 0, y: y || 0, role: role || "root" });
     } catch {
         res.status(500).json({ message: "Server error" });
     }
@@ -125,22 +124,34 @@ router.post("/branches/:branchId/nodes", (req, res) => {
 
 router.put("/branches/:branchId/nodes/:nodeId", (req, res) => {
     const { branchId, nodeId } = req.params;
-    const { name, x, y } = req.body;
+    const { name, x, y, role } = req.body;
+
     try {
-        const stmt = db.prepare(`
-            UPDATE nodes SET
-                name = COALESCE(?, name),
-                x = COALESCE(?, x),
-                y = COALESCE(?, y)
-            WHERE id = ? AND branch_id = ? AND user_id = ?
-        `);
-        const result = stmt.run(name, x, y, nodeId, branchId, req.userId);
+        const updates = [];
+        const params = [];
+
+        if (name !== undefined) { updates.push("name = ?"); params.push(name); }
+        if (x !== undefined) { updates.push("x = ?"); params.push(x); }
+        if (y !== undefined) { updates.push("y = ?"); params.push(y); }
+        if (role !== undefined) { updates.push("role = ?"); params.push(role); }
+
+        if (updates.length === 0) return res.status(400).json({ message: "Nothing to update" });
+
+        params.push(nodeId, branchId, req.userId);
+
+        const stmt = db.prepare(`UPDATE nodes SET ${updates.join(", ")} WHERE id = ? AND branch_id = ? AND user_id = ?`);
+        const result = stmt.run(...params);
+
         if (result.changes === 0) return res.status(404).json({ message: "Node not found" });
-        res.json({ message: "Node updated" });
-    } catch {
+
+        const updatedNode = db.prepare("SELECT id, name, x, y, role FROM nodes WHERE id = ?").get(nodeId);
+        res.json(updatedNode);
+    } catch (err) {
+        console.error(err.message);
         res.status(500).json({ message: "Server error" });
     }
 });
+
 
 router.delete("/branches/:branchId/nodes/:nodeId", (req, res) => {
     const { branchId, nodeId } = req.params;
@@ -154,35 +165,58 @@ router.delete("/branches/:branchId/nodes/:nodeId", (req, res) => {
     }
 });
 
-router.get("/branches/:branchId/connections/", (req, res) => {
+router.get("/branches/:branchId/connections", (req, res) => {
     const { branchId } = req.params;
+
     try {
+        const branchCheck = db.prepare(
+            "SELECT id FROM branches WHERE id = ? AND user_id = ?"
+        ).get(branchId, req.userId);
+
+        if (!branchCheck)
+            return res.status(404).json({ message: "Branch not found" });
+
         const stmt = db.prepare(`
-            SELECT id, from_node AS from_node_id, to_node AS to_node_id
+            SELECT id, from_node_id, to_node_id
             FROM connections
-            WHERE user_id = ? AND branch_id = ?
+            WHERE branch_id = ?
         `);
-        const connections = stmt.all(req.userId, branchId);
+
+        const connections = stmt.all(branchId);
         res.json(connections);
+
     } catch (err) {
-        console.error("Error fetching connections:", err.message);
+        console.error(err.message);
         res.status(500).json({ message: "Server error" });
     }
 });
-
-
 
 router.post("/branches/:branchId/connections", (req, res) => {
     const { branchId } = req.params;
     const { from, to } = req.body;
-    if (from == null || to == null) return res.status(400).json({ message: "From and to required" });
+
+    if (from == null || to == null)
+        return res.status(400).json({ message: "From and to required" });
+
     try {
-        const stmt = db.prepare("INSERT INTO connections (user_id, branch_id, from_node, to_node) VALUES (?, ?, ?, ?)");
-        const result = stmt.run(req.userId, branchId, from, to);
-        res.status(201).json({ id: result.lastInsertRowid, from, to });
-    } catch {
+        const stmt = db.prepare(`
+            INSERT INTO connections (branch_id, from_node_id, to_node_id)
+            VALUES (?, ?, ?)
+        `);
+
+        const result = stmt.run(branchId, from, to);
+
+        res.status(201).json({
+            id: result.lastInsertRowid,
+            from_node_id: from,
+            to_node_id: to
+        });
+
+    } catch (err) {
+        console.error(err.message);
         res.status(500).json({ message: "Server error" });
     }
 });
+
 
 export default router;

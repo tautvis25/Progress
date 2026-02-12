@@ -36,10 +36,10 @@ router.post("/register", (req, res) => {
         const rootBranchId = branchResult.lastInsertRowid;
 
         const insertNode = db.prepare(`
-            INSERT INTO nodes (user_id, branch_id, name, x, y)
-            VALUES (?, ?, ?, ?, ?)
+            INSERT INTO nodes (user_id, branch_id, name, x, y, role)
+            VALUES (?, ?, ?, ?, ?, ?)
         `);
-        insertNode.run(userId, rootBranchId, "Root Node", 80, 120);
+        insertNode.run(userId, rootBranchId, "Root Node", 80, 120, "root");
 
         const accessToken = generateAccessToken(userId);
         const jti = crypto.randomUUID();

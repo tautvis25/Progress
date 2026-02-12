@@ -38,6 +38,7 @@ db.exec(`
         name TEXT,
         x INTEGER DEFAULT 0,
         y INTEGER DEFAULT 0,
+        role TEXT DEFAULT 'default',
         FOREIGN KEY(user_id) REFERENCES users(id),
         FOREIGN KEY(branch_id) REFERENCES branches(id)
     )
@@ -52,17 +53,19 @@ db.exec(`
         FOREIGN KEY (user_id) REFERENCES users(id)
     )
 `)
+
 db.exec(`
-    CREATE TABLE connections (
-        id INTEGER PRIMARY KEY AUTOINCREMENT,
-        branch_id INTEGER,
-        from_node_id INTEGER,
-        to_node_id INTEGER,
-        FOREIGN KEY(branch_id) REFERENCES branches(id),
-        FOREIGN KEY(from_node_id) REFERENCES nodes(id),
-        FOREIGN KEY(to_node_id) REFERENCES nodes(id)
-    );
-`)
+CREATE TABLE connections (
+    id INTEGER PRIMARY KEY AUTOINCREMENT,
+    branch_id INTEGER,
+    from_node_id INTEGER,
+    to_node_id INTEGER,
+    FOREIGN KEY(branch_id) REFERENCES branches(id) ON DELETE CASCADE,
+    FOREIGN KEY(from_node_id) REFERENCES nodes(id) ON DELETE CASCADE,
+    FOREIGN KEY(to_node_id) REFERENCES nodes(id) ON DELETE CASCADE
+);
+`);
+
 
 
 export default db;

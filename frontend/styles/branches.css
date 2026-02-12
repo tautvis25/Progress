@@ -21,7 +21,7 @@ body {
   text-align: center;
 }
 
-.navbar-left img{
+.navbar-left img {
   margin-top: 40px;
   width: 125px;
   height: 125px;
@@ -128,18 +128,31 @@ body {
   position: absolute;
   width: 140px;
   height: 50px;
-  background-color: #1B211A;
-  border: 2px solid #695847;
-  border-radius: 10px;
   display: flex;
   align-items: center;
   justify-content: center;
-  cursor: grab;
+  border-radius: 10px;
   z-index: 2;
+  font-weight: bold;
+  text-align: center;
+  user-select: none;
+}
+
+.node.root {
+  background-color: #1B211A;
+  border: 2px solid #695847;
+  color: #c5b381;
+}
+
+.node.link {
+  background-color: #ffe0b2;
+  border: 2px solid #ff9800;
+  color: #795548;
 }
 
 .node.selected {
   outline: 2px solid #c5b381;
+  box-shadow: 0 0 10px #2196f3;
 }
 
 svg {
